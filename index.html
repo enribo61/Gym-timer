@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gym Timer">
+  
+  <!-- Icona personalizzata ad alta risoluzione per la Home Screen di iPhone -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23ff416c'/><circle cx='256' cy='276' r='140' fill='none' stroke='white' stroke-width='28'/><path d='M256 180v96l64 36' fill='none' stroke='white' stroke-width='24' stroke-linecap='round'/><rect x='226' y='76' width='60' height='36' rx='8' fill='white'/></svg>">
+  
+  <title>Interval Timer - Multi Routine</title>
+  <style>
+    :root {
+      --color-primary-gradient: linear-gradient(180deg, #ff416c 0%, #ff4b2b 100%);
+      --color-work: #58D68D;
+      --color-rest: #EC7063;
+      --color-warning: #F39C12;
+      --current-bg: var(--color-work);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background: #f5f6fa;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .app-viewport {
+      width: 100%;
+      max-width: 430px;
+      height: 100%;
+      max-height: 932px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================
+       SCHERMATA 1: SETUP
+       ========================================= */
+    #setupScreen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #ffffff;
+    }
+
+    .setup-top-banner {
+      background: var(--color-primary-gradient);
+      padding: 20px 20px 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      position: relative;
+      border-bottom-left-radius: 32px;
+      border-bottom-right-radius: 32px;
+    }
+
+    .setup-top-banner h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      opacity: 0.9;
+    }
+
+    .total-time-display {
+      font-size: 46px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .start-btn-container {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-start-workout {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 4px solid #ff416c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+
+    .btn-start-workout svg {
+      width: 26px;
+      height: 26px;
+      fill: #ff416c;
+      margin-left: 3px;
+    }
+
+    .btn-reset-session {
+      background: #ffffff;
+      border: 2px solid #e74c3c;
+      color: #e74c3c;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .setup-content {
+      flex: 1;
+      padding: 40px 16px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .routine-selector-card {
+      background: #fdf2f4;
+      border: 1.5px solid #ffccd5;
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .routine-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .routine-select {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #2c3e50;
+      width: 60%;
+    }
+
+    .routine-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-routine {
+      background: #ffffff;
+      border: 1px solid #ff416c;
+      color: #ff416c;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-routine-delete {
+      border-color: #95a5a6;
+      color: #7f8c8d;
+    }
+
+    .global-settings-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e9ecef;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      margin-top: 6px;
+      margin-bottom: 2px;
+      padding-left: 4px;
+    }
+
+    .exercise-item-card {
+      background: #ffffff;
+      border: 1px solid #e9ecef;
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    .exercise-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .exercise-card-header span:last-child {
+      font-size: 11px;
+      color: #ff416c;
+      font-weight: 600;
+    }
+
+    .exercise-timing-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .time-chip {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip-work { background-color: #e8f8f0; color: #27ae60; }
+    .chip-rest { background-color: #fdedec; color: #e74c3c; }
+    .chip-round { background-color: #eaf2f8; color: #2980b9; }
+
+    /* =========================================
+       SCHERMATA 2: WORKOUT ATTIVO
+       ========================================= */
+    #workoutScreen {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+      background-color: var(--current-bg);
+      color: #ffffff;
+      padding: 20px;
+      transition: background-color 0.4s ease;
+    }
+
+    .workout-header {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+
+    .status-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .status-row {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .dots-group {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .dot.active {
+      background: #ffffff;
+    }
+
+    .timer-container {
+      position: relative;
+      width: 270px;
+      height: 270px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .progress-ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring-track {
+      stroke: rgba(255, 255, 255, 0.25);
+      stroke-width: 8;
+      fill: transparent;
+    }
+
+    .progress-ring-circle {
+      stroke: #ffffff;
+      stroke-width: 8;
+      stroke-linecap: round;
+      fill: transparent;
+      transition: stroke-dashoffset 0.25s linear;
+    }
+
+    .timer-display {
+      text-align: center;
+      z-index: 1;
+      padding: 0 16px;
+    }
+
+    .phase-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      opacity: 0.85;
+      margin-bottom: 2px;
+    }
+
+    .exercise-title-active {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+
+    .time-digits {
+      font-size: 58px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .next-info {
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0.9;
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .btn-text {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 70px;
+      text-align: left;
+    }
+
+    .btn-play {
+      width: 72px;
+      height: 72px;
+      background: #ffffff;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+
+    .btn-play svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--current-bg);
+      transition: fill 0.4s ease;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      width: 70px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-icon svg {
+      width: 30px;
+      height: 30px;
+      fill: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+    
+    <!-- SCHERMATA 1: SETUP -->
+    <div id="setupScreen">
+      <div class="setup-top-banner">
+        <h2 id="bannerRoutineTitle">Interval Timer</h2>
+        <div class="total-time-display" id="setupTotalTime">00:00</div>
+        
+        <div class="start-btn-container">
+          <button class="btn-start-workout" id="btnStartWorkout" title="Inizia Allenamento">
+            <svg id="startBtnSvg" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+          </button>
+          <button class="btn-reset-session" id="btnResetSession">RESET</button>
+        </div>
+      </div>
+
+      <div class="setup-content">
+        <div class="routine-selector-card">
+          <div class="routine-row-top">
+            <select class="routine-select" id="routineSelect" onchange="onRoutineChange()"></select>
+            <div class="routine-actions">
+              <button class="btn-routine" onclick="createNewRoutine()">+ NUOVA</button>
+              <button class="btn-routine btn-routine-delete" onclick="renameRoutine()">RINOMINA</button>
+              <button class="btn-routine btn-routine-delete" onclick="deleteCurrentRoutine()">ELIMINA</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Impostazioni Routine</div>
+        <div class="global-settings-card" onclick="editGetReady()">
+          <span>Conto alla Rovescia Iniziale (Get Ready)</span>
+          <strong id="valGetReady">00:10</strong>
+        </div>
+        <div class="global-settings-card" onclick="editRoundReset()">
+          <span>Pausa Cambio Esercizio (Transition)</span>
+          <strong id="valRoundReset">00:15</strong>
+        </div>
+        <div class="global-settings-card" onclick="editTotalExercises()">
+          <span>Numero Totale Esercizi</span>
+          <strong id="valTotalExercises">3</strong>
+        </div>
+
+        <div class="section-title">Esercizi & Round Individuali</div>
+        <div id="exercisesListContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+    </div>
+
+    <!-- SCHERMATA 2: WORKOUT ATTIVO -->
+    <div id="workoutScreen">
+      <div class="workout-header" id="headerTitle">Work</div>
+
+      <div class="status-container">
+        <div class="status-row">
+          <span>Exercise</span>
+          <div class="dots-group" id="exerciseDots"></div>
+        </div>
+        <div class="status-row">
+          <span>Round</span>
+          <div class="dots-group" id="roundDots"></div>
+        </div>
+      </div>
+
+      <div class="timer-container">
+        <svg class="progress-ring" width="270" height="270">
+          <circle class="progress-ring-track" cx="135" cy="135" r="122"></circle>
+          <circle class="progress-ring-circle" id="progressCircle" cx="135" cy="135" r="122"></circle>
+        </svg>
+        <div class="timer-display">
+          <div class="phase-label" id="phaseLabel">WORK</div>
+          <div class="exercise-title-active" id="activeExerciseTitle">Push-ups</div>
+          <div class="time-digits" id="timeDisplay">00:30</div>
+        </div>
+      </div>
+
+      <div class="next-info" id="nextInfo">UP NEXT: Rest</div>
+
+      <div class="controls">
+        <button class="btn-text" id="btnSetupBack">SETUP</button>
+        <button class="btn-play" id="btnToggle">
+          <svg id="playIcon" viewBox="0 0 24 24" style="display: none;"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+          <svg id="pauseIcon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+        </button>
+        <button class="btn-icon" id="btnSkip" title="Prossimo blocco">
+          <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="white" stroke-width="2.5"></line></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'gym_interval_timer_multi_routines_v1';
+
+    let appData = {
+      activeRoutine: "Esercizi Mattina",
+      routines: {
+        "Esercizi Mattina": {
+          getReady: 10,
+          transitionPause: 15,
+          exercises: [
+            { name: "Push-ups", work: 30, rest: 15, rounds: 3 },
+            { name: "Squats", work: 40, rest: 20, rounds: 4 },
+            { name: "Plank", work: 45, rest: 30, rounds: 3 }
+          ]
+        },
+        "Gambe & Addome": {
+          getReady: 8,
+          transitionPause: 20,
+          exercises: [
+            { name: "Affondi", work: 30, rest: 15, rounds: 3 },
+            { name: "Crunches", work: 40, rest: 15, rounds: 3 }
+          ]
+        }
+      }
+    };
+
+    function loadFromStorage() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.routines && Object.keys(parsed.routines).length > 0) {
+            appData = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn("Errore caricamento localStorage:", e);
+      }
+    }
+
+    function saveToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (e) {
+        console.warn("Errore salvataggio localStorage:", e);
+      }
+    }
+
+    function getCurrentRoutine() {
+      if (!appData.routines[appData.activeRoutine]) {
+        appData.activeRoutine = Object.keys(appData.routines)[0];
+      }
+      return appData.routines[appData.activeRoutine];
+    }
+
+    let sessionActive = false;
+    let currentPhase = 'getReady';
+    let currentExerciseIndex = 0;
+    let currentExerciseRound = 1;
+    let phaseTotalTime = 10;
+    let timeRemaining = 10;
+    let isRunning = false;
+    let timerInterval = null;
+
+    const setupScreen = document.getElementById('setupScreen');
+    const workoutScreen = document.getElementById('workoutScreen');
+    const setupTotalTime = document.getElementById('setupTotalTime');
+    const bannerRoutineTitle = document.getElementById('bannerRoutineTitle');
+    const routineSelect = document.getElementById('routineSelect');
+    const exercisesListContainer = document.getElementById('exercisesListContainer');
+    const valTotalExercises = document.getElementById('valTotalExercises');
+    const valRoundReset = document.getElementById('valRoundReset');
+    const valGetReady = document.getElementById('valGetReady');
+    const btnResetSession = document.getElementById('btnResetSession');
+
+    const headerTitle = document.getElementById('headerTitle');
+    const phaseLabel = document.getElementById('phaseLabel');
+    const activeExerciseTitle = document.getElementById('activeExerciseTitle');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const nextInfo = document.getElementById('nextInfo');
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const btnStartWorkout = document.getElementById('btnStartWorkout');
+    const btnToggle = document.getElementById('btnToggle');
+    const btnSetupBack = document.getElementById('btnSetupBack');
+    const btnSkip = document.getElementById('btnSkip');
+    const exerciseDots = document.getElementById('exerciseDots');
+    const roundDots = document.getElementById('roundDots');
+    const progressCircle = document.getElementById('progressCircle');
+
+    const radius = progressCircle.r.baseVal.value;
+    const circumference = 2 * Math.PI * radius;
+    progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playBeep(freq = 880, duration = 0.12) {
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn('Audio non abilitato:', e);
+      }
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function calculateTotalWorkoutDuration() {
+      const routine = getCurrentRoutine();
+      let total = routine.getReady;
+      routine.exercises.forEach((ex, idx) => {
+        total += (ex.work + ex.rest) * ex.rounds;
+        if (idx < routine.exercises.length - 1) {
+          total += routine.transitionPause;
+        }
+      });
+      setupTotalTime.textContent = formatTime(total);
+    }
+
+    function populateRoutineDropdown() {
+      routineSelect.innerHTML = '';
+      Object.keys(appData.routines).forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        if (name === appData.activeRoutine) opt.selected = true;
+        routineSelect.appendChild(opt);
+      });
+    }
+
+    function onRoutineChange() {
+      appData.activeRoutine = routineSelect.value;
+      resetSession();
+      renderSetupUI();
+    }
+
+    function createNewRoutine() {
+      const name = prompt('Nome nuova sequenza:');
+      if (name && name.trim() !== '') {
+        const trimmed = name.trim();
+        if (appData.routines[trimmed]) {
+          alert('Routine già esistente!');
+          return;
+        }
+        appData.routines[trimmed] = {
+          getReady: 10,
+          transitionPause: 15,
+          exercises: [
+            { name: "Esercizio 1", work: 30, rest: 15, rounds: 3 }
+          ]
+        };
+        appData.activeRoutine = trimmed;
+        resetSession();
+        renderSetupUI();
+      }
+    }
+
+    function renameRoutine() {
+      const oldName = appData.activeRoutine;
+      const newName = prompt(`Rinomina "${oldName}" in:`, oldName);
+      if (newName && newName.trim() !== '' && newName.trim() !== oldName) {
+        const trimmed = newName.trim();
+        appData.routines[trimmed] = appData.routines[oldName];
+        delete appData.routines[oldName];
+        appData.activeRoutine = trimmed;
+        renderSetupUI();
+      }
+    }
+
+    function deleteCurrentRoutine() {
+      const names = Object.keys(appData.routines);
+      if (names.length <= 1) {
+        alert('Mantieni almeno una sequenza.');
+        return;
+      }
+      if (confirm(`Eliminare la sequenza "${appData.activeRoutine}"?`)) {
+        delete appData.routines[appData.activeRoutine];
+        appData.activeRoutine = Object.keys(appData.routines)[0];
+        resetSession();
+        renderSetupUI();
+      }
+    }
+
+    function renderSetupUI() {
+      populateRoutineDropdown();
+      const routine = getCurrentRoutine();
+
+      bannerRoutineTitle.textContent = appData.activeRoutine;
+      valGetReady.textContent = formatTime(routine.getReady);
+      valRoundReset.textContent = formatTime(routine.transitionPause);
+      valTotalExercises.textContent = routine.exercises.length;
+
+      if (sessionActive) {
+        btnResetSession.style.display = 'block';
+        btnStartWorkout.title = "Riprendi Allenamento";
+      } else {
+        btnResetSession.style.display = 'none';
+        btnStartWorkout.title = "Inizia Allenamento";
+      }
+
+      exercisesListContainer.innerHTML = '';
+
+      routine.exercises.forEach((ex, index) => {
+        const card = document.createElement('div');
+        card.className = 'exercise-item-card';
+        card.innerHTML = `
+          <div class="exercise-card-header" onclick="editExerciseName(${index})">
+            <span>#${index + 1}. ${ex.name}</span>
+            <span>MODIFICA NOME ✎</span>
+          </div>
+          <div class="exercise-timing-row">
+            <div class="time-chip chip-work" onclick="editExerciseWork(${index})">
+              <span>Work</span>
+              <strong>${formatTime(ex.work)}</strong>
+            </div>
+            <div class="time-chip chip-rest" onclick="editExerciseRest(${index})">
+              <span>Rest</span>
+              <strong>${formatTime(ex.rest)}</strong>
+            </div>
+            <div class="time-chip chip-round" onclick="editExerciseRounds(${index})">
+              <span>Rounds</span>
+              <strong>${ex.rounds}X</strong>
+            </div>
+          </div>
+        `;
+        exercisesListContainer.appendChild(card);
+      });
+
+      calculateTotalWorkoutDuration();
+      saveToStorage();
+    }
+
+    function editGetReady() {
+      const routine = getCurrentRoutine();
+      const input = prompt('Secondi di preparazione (Get Ready):', routine.getReady);
+      if (input && !isNaN(input)) {
+        routine.getReady = Math.max(3, parseInt(input));
+        if (sessionActive && currentPhase === 'getReady') {
+          phaseTotalTime = routine.getReady;
+          timeRemaining = routine.getReady;
+        }
+        renderSetupUI();
+      }
+    }
+
+    function editRoundReset() {
+      const routine = getCurrentRoutine();
+      const input = prompt('Pausa cambio esercizio (Transition):', routine.transitionPause);
+      if (input && !isNaN(input)) {
+        routine.transitionPause = Math.max(0, parseInt(input));
+        renderSetupUI();
+      }
+    }
+
+    function editTotalExercises() {
+      const routine = getCurrentRoutine();
+      const input = prompt('Numero totale esercizi:', routine.exercises.length);
+      if (input && !isNaN(input)) {
+        const count = Math.max(1, parseInt(input));
+        if (count > routine.exercises.length) {
+          for (let i = routine.exercises.length + 1; i <= count; i++) {
+            routine.exercises.push({ name: `Esercizio ${i}`, work: 30, rest: 15, rounds: 3 });
+          }
+        } else if (count < routine.exercises.length) {
+          routine.exercises = routine.exercises.slice(0, count);
+          if (currentExerciseIndex >= count) resetSession();
+        }
+        renderSetupUI();
+      }
+    }
+
+    function editExerciseName(index) {
+      const routine = getCurrentRoutine();
+      const newName = prompt(`Nome esercizio #${index + 1}:`, routine.exercises[index].name);
+      if (newName && newName.trim() !== '') {
+        routine.exercises[index].name = newName.trim();
+        renderSetupUI();
+      }
+    }
+
+    function editExerciseWork(index) {
+      const routine = getCurrentRoutine();
+      const input = prompt(`Secondi WORK per "${routine.exercises[index].name}":`, routine.exercises[index].work);
+      if (input && !isNaN(input)) {
+        routine.exercises[index].work = Math.max(5, parseInt(input));
+        renderSetupUI();
+      }
+    }
+
+    function editExerciseRest(index) {
+      const routine = getCurrentRoutine();
+      const input = prompt(`Secondi REST per "${routine.exercises[index].name}":`, routine.exercises[index].rest);
+      if (input && !isNaN(input)) {
+        routine.exercises[index].rest = Math.max(0, parseInt(input));
+        renderSetupUI();
+      }
+    }
+
+    function editExerciseRounds(index) {
+      const routine = getCurrentRoutine();
+      const input = prompt(`Numero ROUNDS per "${routine.exercises[index].name}":`, routine.exercises[index].rounds);
+      if (input && !isNaN(input)) {
+        routine.exercises[index].rounds = Math.max(1, parseInt(input));
+        renderSetupUI();
+      }
+    }
+
+    function resetSession() {
+      pauseWorkout();
+      sessionActive = false;
+      currentExerciseIndex = 0;
+      currentExerciseRound = 1;
+      currentPhase = 'getReady';
+      renderSetupUI();
+    }
+
+    function updateWorkoutUI() {
+      timeDisplay.textContent = formatTime(timeRemaining);
+
+      const offset = circumference - (timeRemaining / phaseTotalTime) * circumference;
+      progressCircle.style.strokeDashoffset = offset;
+
+      const routine = getCurrentRoutine();
+      const currentEx = routine.exercises[currentExerciseIndex];
+
+      if (currentPhase === 'getReady' || currentPhase === 'transition') {
+        workoutScreen.style.setProperty('--current-bg', 'var(--color-warning)');
+      } else if (timeRemaining <= 5 && timeRemaining > 0) {
+        workoutScreen.style.setProperty('--current-bg', 'var(--color-warning)');
+      } else if (currentPhase === 'work') {
+        workoutScreen.style.setProperty('--current-bg', 'var(--color-work)');
+      } else {
+        workoutScreen.style.setProperty('--current-bg', 'var(--color-rest)');
+      }
+
+      if (currentPhase === 'getReady') {
+        headerTitle.textContent = 'Get Ready';
+        phaseLabel.textContent = 'GET READY';
+        activeExerciseTitle.textContent = 'Preparazione';
+        nextInfo.textContent = `UP NEXT: ${currentEx.name}`;
+      } else if (currentPhase === 'work') {
+        headerTitle.textContent = 'Work';
+        phaseLabel.textContent = 'WORK';
+        activeExerciseTitle.textContent = currentEx.name;
+        nextInfo.textContent = currentEx.rest > 0 ? `REST: ${currentEx.name}` : (currentExerciseRound < currentEx.rounds ? `NEXT: ROUND ${currentExerciseRound + 1}` : 'NEXT: CAMBIO ESERCIZIO');
+      } else if (currentPhase === 'rest') {
+        headerTitle.textContent = 'Rest';
+        phaseLabel.textContent = 'REST';
+        activeExerciseTitle.textContent = currentEx.name;
+        if (currentExerciseRound < currentEx.rounds) {
+          nextInfo.textContent = `UP NEXT: ${currentEx.name} (Round ${currentExerciseRound + 1}/${currentEx.rounds})`;
+        } else if (currentExerciseIndex + 1 < routine.exercises.length) {
+          nextInfo.textContent = `UP NEXT: ${routine.exercises[currentExerciseIndex + 1].name}`;
+        } else {
+          nextInfo.textContent = 'ULTIMO ROUND!';
+        }
+      } else if (currentPhase === 'transition') {
+        headerTitle.textContent = 'Pausa Cambio';
+        phaseLabel.textContent = 'TRANSITION';
+        activeExerciseTitle.textContent = 'Cambio Esercizio';
+        nextInfo.textContent = `UP NEXT: ${routine.exercises[currentExerciseIndex].name}`;
+      }
+
+      renderWorkoutDots();
+    }
+
+    function renderWorkoutDots() {
+      const routine = getCurrentRoutine();
+      exerciseDots.innerHTML = '';
+      for (let i = 0; i < routine.exercises.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot ${i <= currentExerciseIndex && currentPhase !== 'getReady' ? 'active' : ''}`;
+        exerciseDots.appendChild(dot);
+      }
+
+      roundDots.innerHTML = '';
+      const totalRoundsThisEx = routine.exercises[currentExerciseIndex].rounds;
+      for (let i = 1; i <= totalRoundsThisEx; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot ${i <= currentExerciseRound && currentPhase !== 'getReady' ? 'active' : ''}`;
+        roundDots.appendChild(dot);
+      }
+    }
+
+    function tick() {
+      if (timeRemaining > 1) {
+        timeRemaining--;
+        if (timeRemaining <= 5) {
+          playBeep(880, 0.12);
+        }
+      } else if (timeRemaining === 1) {
+        timeRemaining = 0;
+        playBeep(1400, 0.4);
+        nextStep();
+      }
+      updateWorkoutUI();
+    }
+
+    function nextStep() {
+      const routine = getCurrentRoutine();
+      const currentEx = routine.exercises[currentExerciseIndex];
+
+      if (currentPhase === 'getReady') {
+        currentPhase = 'work';
+        phaseTotalTime = currentEx.work;
+      } else if (currentPhase === 'work') {
+        if (currentEx.rest > 0) {
+          currentPhase = 'rest';
+          phaseTotalTime = currentEx.rest;
+        } else {
+          advanceRoundOrExercise();
+        }
+      } else if (currentPhase === 'rest') {
+        advanceRoundOrExercise();
+      } else if (currentPhase === 'transition') {
+        currentPhase = 'work';
+        phaseTotalTime = routine.exercises[currentExerciseIndex].work;
+      }
+
+      timeRemaining = phaseTotalTime;
+    }
+
+    function advanceRoundOrExercise() {
+      const routine = getCurrentRoutine();
+      const currentEx = routine.exercises[currentExerciseIndex];
+
+      if (currentExerciseRound < currentEx.rounds) {
+        currentExerciseRound++;
+        currentPhase = 'work';
+        phaseTotalTime = currentEx.work;
+      } else {
+        if (currentExerciseIndex + 1 < routine.exercises.length) {
+          currentExerciseIndex++;
+          currentExerciseRound = 1;
+          if (routine.transitionPause > 0) {
+            currentPhase = 'transition';
+            phaseTotalTime = routine.transitionPause;
+          } else {
+            currentPhase = 'work';
+            phaseTotalTime = routine.exercises[currentExerciseIndex].work;
+          }
+        } else {
+          pauseWorkout();
+          sessionActive = false;
+          alert('Complimenti, hai completato la sequenza!');
+          showSetupScreen();
+          return;
+        }
+      }
+    }
+
+    function startWorkout() {
+      initAudio();
+      sessionActive = true;
+      isRunning = true;
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+      timerInterval = setInterval(tick, 1000);
+    }
+
+    function pauseWorkout() {
+      isRunning = false;
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+      clearInterval(timerInterval);
+    }
+
+    function showSetupScreen() {
+      pauseWorkout();
+      workoutScreen.style.display = 'none';
+      setupScreen.style.display = 'flex';
+      renderSetupUI();
+    }
+
+    function showWorkoutScreen() {
+      setupScreen.style.display = 'none';
+      workoutScreen.style.display = 'flex';
+
+      const routine = getCurrentRoutine();
+
+      if (!sessionActive) {
+        currentExerciseIndex = 0;
+        currentExerciseRound = 1;
+        if (routine.getReady > 0) {
+          currentPhase = 'getReady';
+          phaseTotalTime = routine.getReady;
+        } else {
+          currentPhase = 'work';
+          phaseTotalTime = routine.exercises[0].work;
+        }
+        timeRemaining = phaseTotalTime;
+      }
+
+      updateWorkoutUI();
+      startWorkout();
+    }
+
+    btnStartWorkout.addEventListener('click', showWorkoutScreen);
+
+    btnResetSession.addEventListener('click', () => {
+      if (confirm('Resettare la sessione e ripartire dall\'inizio?')) {
+        resetSession();
+      }
+    });
+
+    btnToggle.addEventListener('click', () => {
+      if (isRunning) {
+        pauseWorkout();
+      } else {
+        startWorkout();
+      }
+    });
+
+    btnSetupBack.addEventListener('click', showSetupScreen);
+
+    btnSkip.addEventListener('click', () => {
+      nextStep();
+      updateWorkoutUI();
+    });
+
+    loadFromStorage();
+    renderSetupUI();
+  </script>
+</body>
+</html>
