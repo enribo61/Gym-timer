@@ -9,7 +9,7 @@
   
   <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23ff416c'/><circle cx='256' cy='276' r='140' fill='none' stroke='white' stroke-width='28'/><path d='M256 180v96l64 36' fill='none' stroke='white' stroke-width='24' stroke-linecap='round'/><rect x='226' y='76' width='60' height='36' rx='8' fill='white'/></svg>">
   
-  <title>Interval Timer - Clean Exercise Card</title>
+  <title>Interval Timer - Routine Video Below</title>
   <style>
     :root {
       --color-primary-gradient: linear-gradient(180deg, #ff416c 0%, #ff4b2b 100%);
@@ -137,14 +137,15 @@
       gap: 10px;
     }
 
+    /* Box Selezione Routine */
     .routine-selector-card {
       background: #fdf2f4;
       border: 1.5px solid #ffccd5;
       border-radius: 14px;
-      padding: 10px 14px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
     .routine-row-top {
@@ -183,6 +184,15 @@
     .btn-routine-delete {
       border-color: #95a5a6;
       color: #7f8c8d;
+    }
+
+    /* Riga Link Video Routine posizionata sotto i controlli */
+    .routine-video-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 6px;
+      border-top: 1px dashed rgba(255, 65, 108, 0.25);
     }
 
     .global-settings-card {
@@ -241,7 +251,6 @@
       touch-action: none;
     }
 
-    /* Riga Superiore: Nome esteso e Modifica */
     .exercise-card-header {
       display: flex;
       justify-content: space-between;
@@ -282,7 +291,6 @@
       flex-shrink: 0;
     }
 
-    /* Riga Centrale: Tempi e Round */
     .exercise-timing-row {
       display: flex;
       gap: 8px;
@@ -305,7 +313,6 @@
     .chip-rest { background-color: #fdedec; color: #e74c3c; }
     .chip-round { background-color: #eaf2f8; color: #2980b9; }
 
-    /* Nuova Riga Inferiore: Link YouTube a sinistra, icona link a destra */
     .exercise-footer-row {
       display: flex;
       justify-content: space-between;
@@ -610,7 +617,10 @@
       </div>
 
       <div class="setup-content">
+        
+        <!-- Box Selezione Routine -->
         <div class="routine-selector-card">
+          <!-- 1. Riga Superiore: Tendina e Azioni Routine -->
           <div class="routine-row-top">
             <select class="routine-select" id="routineSelect" onchange="onRoutineChange()"></select>
             <div class="routine-actions">
@@ -618,6 +628,15 @@
               <button class="btn-routine btn-routine-delete" onclick="renameRoutine()">RINOMINA</button>
               <button class="btn-routine btn-routine-delete" onclick="deleteCurrentRoutine()">ELIMINA</button>
             </div>
+          </div>
+
+          <!-- 2. Riga Inferiore: Link YouTube a sinistra e icona link a destra -->
+          <div class="routine-video-row">
+            <a id="routineYtLink" href="#" target="_blank" rel="noopener noreferrer" class="yt-video-link">
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              Guarda su YouTube
+            </a>
+            <span class="btn-edit-url" title="Imposta link video per l'intera sessione" onclick="editRoutineVideo()">🔗</span>
           </div>
         </div>
 
@@ -708,6 +727,7 @@
         "Esercizi Mattina": {
           getReady: 10,
           transitionPause: 15,
+          videoUrl: "",
           exercises: [
             { name: "Squats", work: 16, rest: 16, rounds: 2, videoUrl: "" },
             { name: "Plank", work: 16, rest: 16, rounds: 1, videoUrl: "" },
@@ -717,6 +737,7 @@
         "Gambe & Addome": {
           getReady: 8,
           transitionPause: 20,
+          videoUrl: "",
           exercises: [
             { name: "Affondi", work: 30, rest: 15, rounds: 3, videoUrl: "" },
             { name: "Crunches", work: 40, rest: 15, rounds: 3, videoUrl: "" }
@@ -769,6 +790,7 @@
     const setupTotalTime = document.getElementById('setupTotalTime');
     const bannerRoutineTitle = document.getElementById('bannerRoutineTitle');
     const routineSelect = document.getElementById('routineSelect');
+    const routineYtLink = document.getElementById('routineYtLink');
     const exercisesListContainer = document.getElementById('exercisesListContainer');
     const valTotalExercises = document.getElementById('valTotalExercises');
     const valRoundReset = document.getElementById('valRoundReset');
@@ -938,6 +960,7 @@
         appData.routines[trimmed] = {
           getReady: 10,
           transitionPause: 15,
+          videoUrl: "",
           exercises: [
             { name: "Esercizio 1", work: 30, rest: 15, rounds: 3, videoUrl: "" }
           ]
@@ -974,8 +997,18 @@
       }
     }
 
+    function editRoutineVideo() {
+      const routine = getCurrentRoutine();
+      const currentUrl = routine.videoUrl || "";
+      const newUrl = prompt(`Incolla il link YouTube per l'intera sessione "${appData.activeRoutine}" (lascia vuoto per ricerca automatica):`, currentUrl);
+      if (newUrl !== null) {
+        routine.videoUrl = newUrl.trim();
+        renderSetupUI();
+      }
+    }
+
     // =========================================
-    // RENDERING SETUP CON LAYOUT CARD OTTIMIZZATO
+    // RENDERING SETUP CON DISPOSIZIONE OTTIMIZZATA
     // =========================================
     function renderSetupUI() {
       populateRoutineDropdown();
@@ -985,6 +1018,11 @@
       valGetReady.textContent = formatTime(routine.getReady);
       valRoundReset.textContent = formatTime(routine.transitionPause);
       valTotalExercises.textContent = routine.exercises.length;
+
+      const routineSearchUrl = routine.videoUrl && routine.videoUrl.trim() !== ''
+        ? routine.videoUrl
+        : `https://www.youtube.com/results?search_query=${encodeURIComponent(appData.activeRoutine + ' workout routine tutorial')}`;
+      routineYtLink.href = routineSearchUrl;
 
       if (sessionActive) {
         btnResetSession.style.display = 'block';
@@ -1006,7 +1044,6 @@
           : `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise tutorial')}`;
 
         card.innerHTML = `
-          <!-- 1. Riga Superiore: Nome per esteso e pulsante Modifica -->
           <div class="exercise-card-header">
             <span class="drag-handle-indicator" onclick="editExerciseName(${index})">
               <span class="drag-icon">⋮⋮</span>
@@ -1015,7 +1052,6 @@
             <span class="btn-edit-name" onclick="editExerciseName(${index})">MODIFICA ✎</span>
           </div>
 
-          <!-- 2. Riga Intermedia: I 3 box Work, Rest, Rounds -->
           <div class="exercise-timing-row">
             <div class="time-chip chip-work" onclick="editExerciseWork(${index})">
               <span>Work</span>
@@ -1031,7 +1067,6 @@
             </div>
           </div>
 
-          <!-- 3. Nuova Riga Inferiore: Link YouTube a sinistra, icona link a destra -->
           <div class="exercise-footer-row">
             <a href="${youtubeSearchUrl}" target="_blank" rel="noopener noreferrer" class="yt-video-link">
               <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
@@ -1057,7 +1092,6 @@
 
     function enableCardDragAndDrop(card) {
       card.addEventListener('pointerdown', (e) => {
-        // Ignora l'attivazione del drag se il tocco avviene sui pulsanti interattivi
         if (e.target.closest('.time-chip') || e.target.closest('.yt-video-link') || e.target.closest('.btn-edit-name') || e.target.closest('.btn-edit-url')) {
           return;
         }
