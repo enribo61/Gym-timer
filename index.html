@@ -9,7 +9,7 @@
   
   <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23ff416c'/><circle cx='256' cy='276' r='140' fill='none' stroke='white' stroke-width='28'/><path d='M256 180v96l64 36' fill='none' stroke='white' stroke-width='24' stroke-linecap='round'/><rect x='226' y='76' width='60' height='36' rx='8' fill='white'/></svg>">
   
-  <title>Interval Timer - Drag & Drop</title>
+  <title>Interval Timer - Clean Exercise Card</title>
   <style>
     :root {
       --color-primary-gradient: linear-gradient(180deg, #ff416c 0%, #ff4b2b 100%);
@@ -217,22 +217,21 @@
       color: #95a5a6;
     }
 
-    /* Scheda Esercizio con Stili Drag & Drop */
+    /* Scheda Esercizio */
     .exercise-item-card {
       background: #ffffff;
       border: 1px solid #e9ecef;
       border-radius: 14px;
-      padding: 10px 12px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.03);
       position: relative;
-      touch-action: pan-y; /* Permette lo scroll normale se non si tiene premuto */
+      touch-action: pan-y;
       transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     }
 
-    /* Stile applicato durante il sollevamento con tap prolungato */
     .exercise-item-card.dragging-card {
       opacity: 0.90;
       transform: scale(1.03);
@@ -242,6 +241,7 @@
       touch-action: none;
     }
 
+    /* Riga Superiore: Nome esteso e Modifica */
     .exercise-card-header {
       display: flex;
       justify-content: space-between;
@@ -249,27 +249,40 @@
       font-weight: 700;
       color: #2c3e50;
       font-size: 14px;
-      cursor: pointer;
+      gap: 8px;
     }
 
     .drag-handle-indicator {
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      flex: 1;
+      cursor: pointer;
+      overflow: hidden;
     }
 
     .drag-icon {
       opacity: 0.35;
       font-size: 13px;
       letter-spacing: -2px;
+      flex-shrink: 0;
     }
 
-    .exercise-card-header span:last-child {
+    .exercise-name-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-edit-name {
       font-size: 11px;
       color: #ff416c;
       font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
+    /* Riga Centrale: Tempi e Round */
     .exercise-timing-row {
       display: flex;
       gap: 8px;
@@ -291,6 +304,48 @@
     .chip-work { background-color: #e8f8f0; color: #27ae60; }
     .chip-rest { background-color: #fdedec; color: #e74c3c; }
     .chip-round { background-color: #eaf2f8; color: #2980b9; }
+
+    /* Nuova Riga Inferiore: Link YouTube a sinistra, icona link a destra */
+    .exercise-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2px;
+    }
+
+    .yt-video-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #cc0000 !important;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .yt-video-link:active {
+      opacity: 0.6;
+    }
+
+    .yt-video-link svg {
+      width: 14px;
+      height: 14px;
+      fill: #cc0000;
+    }
+
+    .btn-edit-url {
+      font-size: 13px;
+      cursor: pointer;
+      opacity: 0.65;
+      padding: 2px 4px;
+      transition: opacity 0.2s ease;
+    }
+
+    .btn-edit-url:active {
+      opacity: 1;
+    }
 
     /* =========================================
        SCHERMATA 2: WORKOUT ATTIVO
@@ -654,17 +709,17 @@
           getReady: 10,
           transitionPause: 15,
           exercises: [
-            { name: "Push-ups", work: 30, rest: 15, rounds: 3 },
-            { name: "Squats", work: 40, rest: 20, rounds: 4 },
-            { name: "Plank", work: 45, rest: 30, rounds: 3 }
+            { name: "Squats", work: 16, rest: 16, rounds: 2, videoUrl: "" },
+            { name: "Plank", work: 16, rest: 16, rounds: 1, videoUrl: "" },
+            { name: "Hamstring curl", work: 16, rest: 16, rounds: 1, videoUrl: "" }
           ]
         },
         "Gambe & Addome": {
           getReady: 8,
           transitionPause: 20,
           exercises: [
-            { name: "Affondi", work: 30, rest: 15, rounds: 3 },
-            { name: "Crunches", work: 40, rest: 15, rounds: 3 }
+            { name: "Affondi", work: 30, rest: 15, rounds: 3, videoUrl: "" },
+            { name: "Crunches", work: 40, rest: 15, rounds: 3, videoUrl: "" }
           ]
         }
       }
@@ -744,7 +799,7 @@
     const circumference = 2 * Math.PI * radius;
     progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
 
-    // Audio & Speech
+    // Audio & Speech Engine
     let audioCtx = null;
     function initAudio() {
       if (!audioCtx) {
@@ -884,7 +939,7 @@
           getReady: 10,
           transitionPause: 15,
           exercises: [
-            { name: "Esercizio 1", work: 30, rest: 15, rounds: 3 }
+            { name: "Esercizio 1", work: 30, rest: 15, rounds: 3, videoUrl: "" }
           ]
         };
         appData.activeRoutine = trimmed;
@@ -920,7 +975,7 @@
     }
 
     // =========================================
-    // RENDERING SETUP & DRAG-AND-DROP ENGINE
+    // RENDERING SETUP CON LAYOUT CARD OTTIMIZZATO
     // =========================================
     function renderSetupUI() {
       populateRoutineDropdown();
@@ -945,14 +1000,22 @@
         const card = document.createElement('div');
         card.className = 'exercise-item-card';
         card.setAttribute('data-index', index);
+
+        const youtubeSearchUrl = ex.videoUrl && ex.videoUrl.trim() !== '' 
+          ? ex.videoUrl 
+          : `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise tutorial')}`;
+
         card.innerHTML = `
-          <div class="exercise-card-header" onclick="editExerciseName(${index})">
-            <span class="drag-handle-indicator">
+          <!-- 1. Riga Superiore: Nome per esteso e pulsante Modifica -->
+          <div class="exercise-card-header">
+            <span class="drag-handle-indicator" onclick="editExerciseName(${index})">
               <span class="drag-icon">⋮⋮</span>
-              <span class="card-num-title">#${index + 1}. ${ex.name}</span>
+              <span class="exercise-name-text">#${index + 1}. ${ex.name}</span>
             </span>
-            <span>MODIFICA NOME ✎</span>
+            <span class="btn-edit-name" onclick="editExerciseName(${index})">MODIFICA ✎</span>
           </div>
+
+          <!-- 2. Riga Intermedia: I 3 box Work, Rest, Rounds -->
           <div class="exercise-timing-row">
             <div class="time-chip chip-work" onclick="editExerciseWork(${index})">
               <span>Work</span>
@@ -967,11 +1030,18 @@
               <strong>${ex.rounds}X</strong>
             </div>
           </div>
+
+          <!-- 3. Nuova Riga Inferiore: Link YouTube a sinistra, icona link a destra -->
+          <div class="exercise-footer-row">
+            <a href="${youtubeSearchUrl}" target="_blank" rel="noopener noreferrer" class="yt-video-link">
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              Guarda su YouTube
+            </a>
+            <span class="btn-edit-url" title="Imposta link video personalizzato" onclick="editExerciseVideo(${index})">🔗</span>
+          </div>
         `;
 
-        // Abilitazione del Drag & Drop via Tap & Hold
         enableCardDragAndDrop(card);
-
         exercisesListContainer.appendChild(card);
       });
 
@@ -979,7 +1049,7 @@
       saveToStorage();
     }
 
-    // Motore Drag & Drop tramite Pointer Events
+    // Motore Drag & Drop
     let activeDragCard = null;
     let holdTimeout = null;
     let startY = 0;
@@ -987,25 +1057,22 @@
 
     function enableCardDragAndDrop(card) {
       card.addEventListener('pointerdown', (e) => {
-        // Se il tocco è sui chip o sul tasto modifica, non attivare il drag per non bloccare il click
-        if (e.target.closest('.time-chip') || e.target.closest('span:last-child')) {
+        // Ignora l'attivazione del drag se il tocco avviene sui pulsanti interattivi
+        if (e.target.closest('.time-chip') || e.target.closest('.yt-video-link') || e.target.closest('.btn-edit-name') || e.target.closest('.btn-edit-url')) {
           return;
         }
 
         startY = e.clientY;
         activeDragCard = card;
 
-        // Attesa di 350ms per distinguere un tap normale dal "press and hold"
         holdTimeout = setTimeout(() => {
           isDragging = true;
           activeDragCard.classList.add('dragging-card');
-          // Vibrazione di feedback aptico se supportata
           if (navigator.vibrate) navigator.vibrate(40);
         }, 350);
       });
 
       card.addEventListener('pointermove', (e) => {
-        // Se l'utente muove il dito prima dello scadere del timeout di 350ms, cancella il hold
         if (!isDragging) {
           if (Math.abs(e.clientY - startY) > 8) {
             clearTimeout(holdTimeout);
@@ -1013,9 +1080,8 @@
           return;
         }
 
-        e.preventDefault(); // Blocca lo scroll della pagina mentre trasciniamo
+        e.preventDefault();
 
-        // Trova la posizione del cursore e individua l'elemento target
         const afterElement = getDragAfterElement(exercisesListContainer, e.clientY);
         if (afterElement == null) {
           exercisesListContainer.appendChild(activeDragCard);
@@ -1030,8 +1096,6 @@
           activeDragCard.classList.remove('dragging-card');
           isDragging = false;
           activeDragCard = null;
-
-          // Riordina l'array dati leggendo il nuovo ordine nel DOM
           reorderExercisesFromDOM();
         } else {
           activeDragCard = null;
@@ -1043,7 +1107,6 @@
       card.addEventListener('pointercancel', finishDrag);
     }
 
-    // Calcola quale scheda si trova immediatamente sotto la posizione verticale del dito
     function getDragAfterElement(container, y) {
       const draggableElements = [...container.querySelectorAll('.exercise-item-card:not(.dragging-card)')];
 
@@ -1058,7 +1121,6 @@
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // Ricostruisce l'array exercises in base alla nuova disposizione visuale
     function reorderExercisesFromDOM() {
       const routine = getCurrentRoutine();
       const currentCards = [...exercisesListContainer.querySelectorAll('.exercise-item-card')];
@@ -1103,7 +1165,7 @@
         const count = Math.max(1, parseInt(input));
         if (count > routine.exercises.length) {
           for (let i = routine.exercises.length + 1; i <= count; i++) {
-            routine.exercises.push({ name: `Esercizio ${i}`, work: 30, rest: 15, rounds: 3 });
+            routine.exercises.push({ name: `Esercizio ${i}`, work: 30, rest: 15, rounds: 3, videoUrl: "" });
           }
         } else if (count < routine.exercises.length) {
           routine.exercises = routine.exercises.slice(0, count);
@@ -1119,6 +1181,17 @@
       const newName = prompt(`Nome esercizio #${index + 1}:`, routine.exercises[index].name);
       if (newName && newName.trim() !== '') {
         routine.exercises[index].name = newName.trim();
+        renderSetupUI();
+      }
+    }
+
+    function editExerciseVideo(index) {
+      if (isDragging) return;
+      const routine = getCurrentRoutine();
+      const currentUrl = routine.exercises[index].videoUrl || "";
+      const newUrl = prompt(`Incolla il link YouTube per "${routine.exercises[index].name}" (lascia vuoto per ricerca automatica):`, currentUrl);
+      if (newUrl !== null) {
+        routine.exercises[index].videoUrl = newUrl.trim();
         renderSetupUI();
       }
     }
@@ -1177,7 +1250,6 @@
       const sessionLeft = calculateRemainingWorkoutTime();
       totalRemainingTime.textContent = `Sessione: ${formatTime(sessionLeft)}`;
 
-      // Banner Superiore Fisso
       if (currentPhase === 'getReady') {
         topExerciseBanner.textContent = 'Preparazione';
       } else if (currentPhase === 'transition') {
@@ -1186,7 +1258,6 @@
         topExerciseBanner.textContent = currentEx.name;
       }
 
-      // Banner Inferiore Adattivo
       if (currentPhase === 'getReady') {
         bottomNextBanner.textContent = `PROSSIMO: ${currentEx.name}`;
       } else if (currentExerciseRound < currentEx.rounds) {
@@ -1197,7 +1268,6 @@
         bottomNextBanner.textContent = `ULTIMO ESERCIZIO!`;
       }
 
-      // Badge numerici
       const currentExDisplay = currentPhase === 'getReady' ? 1 : (currentExerciseIndex + 1);
       const remainingExercisesCount = routine.exercises.length - (currentExDisplay - 1);
       exerciseNumericBadge.textContent = `(${currentExDisplay}/${routine.exercises.length} - ${remainingExercisesCount} rim.)`;
@@ -1206,7 +1276,6 @@
       const remainingRoundsCount = currentEx.rounds - (currentRoundDisplay - 1);
       roundNumericBadge.textContent = `(${currentRoundDisplay}/${currentEx.rounds} - ${remainingRoundsCount} rim.)`;
 
-      // Colori di sfondo
       if (currentPhase === 'getReady' || currentPhase === 'transition') {
         workoutScreen.style.setProperty('--current-bg', 'var(--color-warning)');
       } else if (timeRemaining <= 5 && timeRemaining > 0) {
