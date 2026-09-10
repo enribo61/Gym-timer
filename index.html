@@ -9,14 +9,15 @@
   
   <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23ff416c'/><circle cx='256' cy='276' r='140' fill='none' stroke='white' stroke-width='28'/><path d='M256 180v96l64 36' fill='none' stroke='white' stroke-width='24' stroke-linecap='round'/><rect x='226' y='76' width='60' height='36' rx='8' fill='white'/></svg>">
   
-  <title>Interval Timer - Routine Video Below</title>
+  <title>Interval Timer - iOS Touch Drag Fixed</title>
   <style>
     :root {
       --color-primary-gradient: linear-gradient(180deg, #ff416c 0%, #ff4b2b 100%);
-      --color-work: #58D68D;
-      --color-rest: #EC7063;
-      --color-warning: #F39C12;
-      --current-bg: var(--color-work);
+      --color-work: #27ae60;
+      --color-rest: #e74c3c;
+      --color-warning: #f39c12;
+      --circle-bg-color: var(--color-warning);
+      --bg-dark-grey: #121212;
     }
 
     * {
@@ -29,7 +30,7 @@
     }
 
     body {
-      background: #f5f6fa;
+      background: var(--bg-dark-grey);
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -46,6 +47,7 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      background: var(--bg-dark-grey);
     }
 
     /* =========================================
@@ -135,9 +137,15 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Box Selezione Routine */
+    /* Classe aggiunta per bloccare lo scorrimento del contenitore durante il drag */
+    .setup-content.no-scroll {
+      overflow-y: hidden !important;
+      touch-action: none !important;
+    }
+
     .routine-selector-card {
       background: #fdf2f4;
       border: 1.5px solid #ffccd5;
@@ -186,7 +194,6 @@
       color: #7f8c8d;
     }
 
-    /* Riga Link Video Routine posizionata sotto i controlli */
     .routine-video-row {
       display: flex;
       justify-content: space-between;
@@ -227,7 +234,7 @@
       color: #95a5a6;
     }
 
-    /* Scheda Esercizio */
+    /* Scheda Esercizio con ottimizzazione touch per iOS */
     .exercise-item-card {
       background: #ffffff;
       border: 1px solid #e9ecef;
@@ -245,10 +252,10 @@
     .exercise-item-card.dragging-card {
       opacity: 0.90;
       transform: scale(1.03);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
-      border: 1.5px solid #ff416c;
-      z-index: 100;
-      touch-action: none;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+      border: 2px solid #ff416c;
+      z-index: 1000;
+      touch-action: none !important;
     }
 
     .exercise-card-header {
@@ -363,54 +370,79 @@
       justify-content: space-between;
       align-items: center;
       height: 100%;
-      background-color: var(--current-bg);
+      background-color: var(--bg-dark-grey);
       color: #ffffff;
-      padding: 20px;
-      transition: background-color 0.4s ease;
+      padding: 16px 18px 20px;
     }
 
     .workout-header-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 6px;
-      gap: 3px;
+      width: 100%;
+      margin-top: 2px;
     }
 
     .workout-header {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 2px;
       text-transform: uppercase;
+      color: var(--circle-bg-color);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      transition: color 0.4s ease;
+      line-height: 1.1;
     }
 
-    .total-remaining-time {
-      font-size: 12px;
-      font-weight: 600;
+    .session-unified-box {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      margin: 18px 0 10px;
+    }
+
+    .session-stat-left {
+      font-size: 24px;
+      font-weight: 800;
       letter-spacing: 0.5px;
-      opacity: 0.85;
-      background: rgba(0, 0, 0, 0.12);
-      padding: 2px 10px;
-      border-radius: 12px;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .session-stat-right {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #ffffff;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
 
     .current-exercise-banner {
       width: 100%;
-      text-align: center;
-      font-size: clamp(20px, 6vw, 30px);
+      height: 48px;
+      margin: 0 0 4px;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .current-exercise-banner .marquee-text-content {
+      font-size: clamp(20px, 6vw, 26px);
       font-weight: 800;
       letter-spacing: 0.5px;
-      color: #ffffff;
-      margin: 6px 0;
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .status-container {
@@ -421,42 +453,39 @@
     }
 
     .status-row {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 12px;
-      padding: 8px 14px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-weight: 600;
-      font-size: 14px;
     }
 
-    .status-label-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .status-count-badge {
-      font-size: 12px;
-      opacity: 0.85;
-      font-weight: 500;
+    .status-row-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #ffffff;
     }
 
     .dots-group {
       display: flex;
-      gap: 5px;
+      gap: 7px;
+      align-items: center;
     }
 
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.18);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .dot.active {
-      background: #ffffff;
+      background: #f39c12;
+      box-shadow: 0 0 6px rgba(243, 156, 18, 0.6);
     }
 
     .timer-container {
@@ -466,6 +495,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      margin: 2px 0;
     }
 
     .progress-ring {
@@ -475,8 +505,13 @@
       transform: rotate(-90deg);
     }
 
+    .progress-ring-fill {
+      fill: var(--circle-bg-color);
+      transition: fill 0.4s ease;
+    }
+
     .progress-ring-track {
-      stroke: rgba(255, 255, 255, 0.25);
+      stroke: rgba(255, 255, 255, 0.35);
       stroke-width: 8;
       fill: transparent;
     }
@@ -497,9 +532,9 @@
 
     .phase-label {
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 1px;
-      opacity: 0.85;
+      opacity: 0.9;
       margin-bottom: 2px;
     }
 
@@ -507,39 +542,76 @@
       font-size: 16px;
       font-weight: 700;
       margin-bottom: 2px;
-      opacity: 0.9;
+      opacity: 0.95;
     }
 
     .time-digits {
       font-size: 58px;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: -1px;
+      line-height: 1;
     }
 
-    .next-info {
-      font-size: 14px;
-      font-weight: 600;
-      opacity: 0.85;
+    .round-active-indicator {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
       text-align: center;
+      margin: 2px 0 4px;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
 
     .next-exercise-banner {
       width: 100%;
-      text-align: center;
-      font-size: clamp(16px, 4.5vw, 22px);
+      height: 44px;
+      margin: 2px 0 6px;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .next-exercise-banner .marquee-text-content {
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: 0.5px;
-      color: #ffffff;
-      margin: 6px 0 10px;
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      white-space: nowrap;
+    }
+
+    .marquee-wrapper {
+      width: 100%;
       overflow: hidden;
-      text-overflow: ellipsis;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      white-space: nowrap;
+      display: block;
+    }
+
+    .marquee-text-content {
+      display: block;
+      color: #ffffff;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .marquee-text-content.is-scrolling {
+      display: inline-block;
+      text-align: left;
+      padding-left: 100%;
+      animation: continuous-scroll 10s linear infinite;
+    }
+
+    @keyframes continuous-scroll {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-100%, 0, 0);
+      }
     }
 
     .controls {
@@ -547,13 +619,13 @@
       justify-content: space-around;
       align-items: center;
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 6px;
     }
 
     .btn-text {
       background: none;
       border: none;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.75);
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -562,23 +634,22 @@
     }
 
     .btn-play {
-      width: 72px;
-      height: 72px;
+      width: 70px;
+      height: 70px;
       background: #ffffff;
       border: none;
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
       cursor: pointer;
     }
 
     .btn-play svg {
       width: 32px;
       height: 32px;
-      fill: var(--current-bg);
-      transition: fill 0.4s ease;
+      fill: #121212;
     }
 
     .btn-icon {
@@ -616,11 +687,9 @@
         </div>
       </div>
 
-      <div class="setup-content">
+      <div class="setup-content" id="setupContentArea">
         
-        <!-- Box Selezione Routine -->
         <div class="routine-selector-card">
-          <!-- 1. Riga Superiore: Tendina e Azioni Routine -->
           <div class="routine-row-top">
             <select class="routine-select" id="routineSelect" onchange="onRoutineChange()"></select>
             <div class="routine-actions">
@@ -630,7 +699,6 @@
             </div>
           </div>
 
-          <!-- 2. Riga Inferiore: Link YouTube a sinistra e icona link a destra -->
           <div class="routine-video-row">
             <a id="routineYtLink" href="#" target="_blank" rel="noopener noreferrer" class="yt-video-link">
               <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
@@ -664,45 +732,58 @@
 
     <!-- SCHERMATA 2: WORKOUT ATTIVO -->
     <div id="workoutScreen">
+      <!-- Intestazione Superiore -->
       <div class="workout-header-container">
-        <div class="workout-header" id="headerTitle">Work</div>
-        <div class="total-remaining-time" id="totalRemainingTime">Sessione: 00:00</div>
+        <div class="workout-header" id="headerTitle">GET READY</div>
+        
+        <!-- Box Unificato di Sessione -->
+        <div class="session-unified-box">
+          <span class="session-stat-left" id="remainingExercisesPill">RIMANENTI: 3</span>
+          <span class="session-stat-right" id="totalRemainingTime">02:35</span>
+        </div>
       </div>
 
-      <div class="current-exercise-banner" id="topExerciseBanner">Push-ups</div>
+      <!-- Banner Esercizio Attivo con Marquee -->
+      <div class="current-exercise-banner" id="topExerciseBanner">
+        <div class="marquee-wrapper">
+          <span class="marquee-text-content" id="topExerciseText">Preparazione</span>
+        </div>
+      </div>
 
       <div class="status-container">
         <div class="status-row">
-          <div class="status-label-group">
-            <span>Exercise</span>
-            <span class="status-count-badge" id="exerciseNumericBadge">(1/3)</span>
-          </div>
+          <span class="status-row-title">Exercise</span>
           <div class="dots-group" id="exerciseDots"></div>
         </div>
         <div class="status-row">
-          <div class="status-label-group">
-            <span>Round</span>
-            <span class="status-count-badge" id="roundNumericBadge">(1/3)</span>
-          </div>
+          <span class="status-row-title">Round</span>
           <div class="dots-group" id="roundDots"></div>
         </div>
       </div>
 
+      <!-- Cerchio Countdown -->
       <div class="timer-container">
         <svg class="progress-ring" width="270" height="270">
+          <circle class="progress-ring-fill" cx="135" cy="135" r="122"></circle>
           <circle class="progress-ring-track" cx="135" cy="135" r="122"></circle>
           <circle class="progress-ring-circle" id="progressCircle" cx="135" cy="135" r="122"></circle>
         </svg>
         <div class="timer-display">
-          <div class="phase-label" id="phaseLabel">WORK</div>
-          <div class="exercise-title-active" id="activeExerciseTitle">Push-ups</div>
-          <div class="time-digits" id="timeDisplay">00:30</div>
+          <div class="phase-label" id="phaseLabel">GET READY</div>
+          <div class="exercise-title-active" id="activeExerciseTitle">Preparazione</div>
+          <div class="time-digits" id="timeDisplay">00:07</div>
         </div>
       </div>
 
-      <div class="next-info" id="nextInfo">REST: Push-ups</div>
+      <!-- Contatore Round Attivo -->
+      <div class="round-active-indicator" id="activeRoundIndicator">Round 1/2</div>
 
-      <div class="next-exercise-banner" id="bottomNextBanner">PROSSIMO: Squats</div>
+      <!-- Banner Prossimo Esercizio con Marquee -->
+      <div class="next-exercise-banner" id="bottomNextBanner">
+        <div class="marquee-wrapper">
+          <span class="marquee-text-content" id="bottomNextText">PROSSIMO: Squats</span>
+        </div>
+      </div>
 
       <div class="controls">
         <button class="btn-text" id="btnSetupBack">SETUP</button>
@@ -731,7 +812,7 @@
           exercises: [
             { name: "Squats", work: 16, rest: 16, rounds: 2, videoUrl: "" },
             { name: "Plank", work: 16, rest: 16, rounds: 1, videoUrl: "" },
-            { name: "Hamstring curl", work: 16, rest: 16, rounds: 1, videoUrl: "" }
+            { name: "Hamstring curl tubular extensor", work: 16, rest: 16, rounds: 1, videoUrl: "" }
           ]
         },
         "Gambe & Addome": {
@@ -784,9 +865,13 @@
     let isRunning = false;
     let timerInterval = null;
 
+    let lastTopExerciseText = '';
+    let lastNextBannerText = '';
+
     // Elementi DOM
     const setupScreen = document.getElementById('setupScreen');
     const workoutScreen = document.getElementById('workoutScreen');
+    const setupContentArea = document.getElementById('setupContentArea');
     const setupTotalTime = document.getElementById('setupTotalTime');
     const bannerRoutineTitle = document.getElementById('bannerRoutineTitle');
     const routineSelect = document.getElementById('routineSelect');
@@ -798,15 +883,15 @@
     const btnResetSession = document.getElementById('btnResetSession');
 
     const headerTitle = document.getElementById('headerTitle');
+    const remainingExercisesPill = document.getElementById('remainingExercisesPill');
     const totalRemainingTime = document.getElementById('totalRemainingTime');
-    const topExerciseBanner = document.getElementById('topExerciseBanner');
+    const topExerciseText = document.getElementById('topExerciseText');
     const bottomNextBanner = document.getElementById('bottomNextBanner');
-    const exerciseNumericBadge = document.getElementById('exerciseNumericBadge');
-    const roundNumericBadge = document.getElementById('roundNumericBadge');
+    const bottomNextText = document.getElementById('bottomNextText');
+    const activeRoundIndicator = document.getElementById('activeRoundIndicator');
     const phaseLabel = document.getElementById('phaseLabel');
     const activeExerciseTitle = document.getElementById('activeExerciseTitle');
     const timeDisplay = document.getElementById('timeDisplay');
-    const nextInfo = document.getElementById('nextInfo');
     const playIcon = document.getElementById('playIcon');
     const pauseIcon = document.getElementById('pauseIcon');
     const btnStartWorkout = document.getElementById('btnStartWorkout');
@@ -1008,7 +1093,7 @@
     }
 
     // =========================================
-    // RENDERING SETUP CON DISPOSIZIONE OTTIMIZZATA
+    // RENDERING SETUP
     // =========================================
     function renderSetupUI() {
       populateRoutineDropdown();
@@ -1084,36 +1169,51 @@
       saveToStorage();
     }
 
-    // Motore Drag & Drop
+    // =========================================
+    // MOTORE DRAG & DROP OTTIMIZZATO PER iOS SAFARI
+    // =========================================
     let activeDragCard = null;
     let holdTimeout = null;
     let startY = 0;
     let isDragging = false;
+    let currentPointerId = null;
 
     function enableCardDragAndDrop(card) {
       card.addEventListener('pointerdown', (e) => {
+        // Se il tocco avviene su elementi interattivi, non innescare il drag
         if (e.target.closest('.time-chip') || e.target.closest('.yt-video-link') || e.target.closest('.btn-edit-name') || e.target.closest('.btn-edit-url')) {
           return;
         }
 
         startY = e.clientY;
         activeDragCard = card;
+        currentPointerId = e.pointerId;
 
+        // Press & Hold di 350ms
         holdTimeout = setTimeout(() => {
           isDragging = true;
           activeDragCard.classList.add('dragging-card');
+          setupContentArea.classList.add('no-scroll');
+
+          // CATTURA DEL PUNTATORE: impedisce a Safari iOS di avviare lo scrolling
+          try {
+            activeDragCard.setPointerCapture(currentPointerId);
+          } catch (err) {}
+
           if (navigator.vibrate) navigator.vibrate(40);
         }, 350);
       });
 
       card.addEventListener('pointermove', (e) => {
         if (!isDragging) {
+          // Se il dito si sposta prima del termine dell'attesa di 350ms, cancella il drag e lascia scorrere la pagina
           if (Math.abs(e.clientY - startY) > 8) {
             clearTimeout(holdTimeout);
           }
           return;
         }
 
+        // Blocca qualsiasi comportamento nativo durante il drag
         e.preventDefault();
 
         const afterElement = getDragAfterElement(exercisesListContainer, e.clientY);
@@ -1124,22 +1224,39 @@
         }
       });
 
-      const finishDrag = () => {
+      const finishDrag = (e) => {
         clearTimeout(holdTimeout);
         if (isDragging && activeDragCard) {
+          try {
+            if (currentPointerId !== null) {
+              activeDragCard.releasePointerCapture(currentPointerId);
+            }
+          } catch (err) {}
+
           activeDragCard.classList.remove('dragging-card');
+          setupContentArea.classList.remove('no-scroll');
           isDragging = false;
           activeDragCard = null;
+          currentPointerId = null;
           reorderExercisesFromDOM();
         } else {
+          setupContentArea.classList.remove('no-scroll');
           activeDragCard = null;
           isDragging = false;
+          currentPointerId = null;
         }
       };
 
       card.addEventListener('pointerup', finishDrag);
       card.addEventListener('pointercancel', finishDrag);
     }
+
+    // Prevenzione esplicita di touchmove durante il trascinamento su schermi touch
+    window.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        e.preventDefault();
+      }
+    }, { passive: false });
 
     function getDragAfterElement(container, y) {
       const draggableElements = [...container.querySelectorAll('.exercise-item-card:not(.dragging-card)')];
@@ -1266,7 +1383,39 @@
       currentExerciseIndex = 0;
       currentExerciseRound = 1;
       currentPhase = 'getReady';
+      lastTopExerciseText = '';
+      lastNextBannerText = '';
       renderSetupUI();
+    }
+
+    // Gestione testo scorrevole esercizio corrente
+    function setTopExerciseText(text) {
+      if (lastTopExerciseText === text) {
+        return;
+      }
+      lastTopExerciseText = text;
+
+      topExerciseText.textContent = text;
+      topExerciseText.classList.remove('is-scrolling');
+
+      if (text.length > 18) {
+        topExerciseText.classList.add('is-scrolling');
+      }
+    }
+
+    // Gestione testo scorrevole prossimo esercizio
+    function setNextBannerText(text) {
+      if (lastNextBannerText === text) {
+        return;
+      }
+      lastNextBannerText = text;
+
+      bottomNextText.textContent = text;
+      bottomNextText.classList.remove('is-scrolling');
+
+      if (text.length > 22) {
+        bottomNextText.classList.add('is-scrolling');
+      }
     }
 
     // =========================================
@@ -1282,89 +1431,88 @@
       const currentEx = routine.exercises[currentExerciseIndex];
 
       const sessionLeft = calculateRemainingWorkoutTime();
-      totalRemainingTime.textContent = `Sessione: ${formatTime(sessionLeft)}`;
+      totalRemainingTime.textContent = formatTime(sessionLeft);
 
-      if (currentPhase === 'getReady') {
-        topExerciseBanner.textContent = 'Preparazione';
-      } else if (currentPhase === 'transition') {
-        topExerciseBanner.textContent = 'Cambio Esercizio';
-      } else {
-        topExerciseBanner.textContent = currentEx.name;
-      }
-
-      if (currentPhase === 'getReady') {
-        bottomNextBanner.textContent = `PROSSIMO: ${currentEx.name}`;
-      } else if (currentExerciseRound < currentEx.rounds) {
-        bottomNextBanner.textContent = `PROSSIMO: ${currentEx.name} (Round ${currentExerciseRound + 1})`;
-      } else if (currentExerciseIndex + 1 < routine.exercises.length) {
-        bottomNextBanner.textContent = `PROSSIMO: ${routine.exercises[currentExerciseIndex + 1].name}`;
-      } else {
-        bottomNextBanner.textContent = `ULTIMO ESERCIZIO!`;
-      }
-
-      const currentExDisplay = currentPhase === 'getReady' ? 1 : (currentExerciseIndex + 1);
-      const remainingExercisesCount = routine.exercises.length - (currentExDisplay - 1);
-      exerciseNumericBadge.textContent = `(${currentExDisplay}/${routine.exercises.length} - ${remainingExercisesCount} rim.)`;
-
-      const currentRoundDisplay = currentPhase === 'getReady' ? 1 : currentExerciseRound;
-      const remainingRoundsCount = currentEx.rounds - (currentRoundDisplay - 1);
-      roundNumericBadge.textContent = `(${currentRoundDisplay}/${currentEx.rounds} - ${remainingRoundsCount} rim.)`;
+      const remainingExercisesCount = routine.exercises.length - currentExerciseIndex;
+      remainingExercisesPill.textContent = `RIMANENTI: ${remainingExercisesCount}`;
 
       if (currentPhase === 'getReady' || currentPhase === 'transition') {
-        workoutScreen.style.setProperty('--current-bg', 'var(--color-warning)');
+        workoutScreen.style.setProperty('--circle-bg-color', 'var(--color-warning)');
       } else if (timeRemaining <= 5 && timeRemaining > 0) {
-        workoutScreen.style.setProperty('--current-bg', 'var(--color-warning)');
+        workoutScreen.style.setProperty('--circle-bg-color', 'var(--color-warning)');
       } else if (currentPhase === 'work') {
-        workoutScreen.style.setProperty('--current-bg', 'var(--color-work)');
+        workoutScreen.style.setProperty('--circle-bg-color', 'var(--color-work)');
       } else {
-        workoutScreen.style.setProperty('--current-bg', 'var(--color-rest)');
+        workoutScreen.style.setProperty('--circle-bg-color', 'var(--color-rest)');
       }
 
       if (currentPhase === 'getReady') {
-        headerTitle.textContent = 'Get Ready';
+        headerTitle.textContent = 'GET READY';
         phaseLabel.textContent = 'GET READY';
         activeExerciseTitle.textContent = 'Preparazione';
-        nextInfo.textContent = `UP NEXT: ${currentEx.name}`;
+        setTopExerciseText('Preparazione');
       } else if (currentPhase === 'work') {
-        headerTitle.textContent = 'Work';
+        headerTitle.textContent = 'WORK';
         phaseLabel.textContent = 'WORK';
         activeExerciseTitle.textContent = currentEx.name;
-        nextInfo.textContent = currentEx.rest > 0 ? `REST: ${currentEx.name}` : (currentExerciseRound < currentEx.rounds ? `NEXT: ROUND ${currentExerciseRound + 1}` : 'NEXT: CAMBIO ESERCIZIO');
+        setTopExerciseText(currentEx.name);
       } else if (currentPhase === 'rest') {
-        headerTitle.textContent = 'Rest';
+        headerTitle.textContent = 'REST';
         phaseLabel.textContent = 'REST';
         activeExerciseTitle.textContent = currentEx.name;
-        if (currentExerciseRound < currentEx.rounds) {
-          nextInfo.textContent = `UP NEXT: ${currentEx.name} (Round ${currentExerciseRound + 1}/${currentEx.rounds})`;
-        } else if (currentExerciseIndex + 1 < routine.exercises.length) {
-          nextInfo.textContent = `UP NEXT: ${routine.exercises[currentExerciseIndex + 1].name}`;
-        } else {
-          nextInfo.textContent = 'ULTIMO ROUND!';
-        }
+        setTopExerciseText(currentEx.name);
       } else if (currentPhase === 'transition') {
-        headerTitle.textContent = 'Pausa Cambio';
+        headerTitle.textContent = 'PAUSA CAMBIO';
         phaseLabel.textContent = 'TRANSITION';
         activeExerciseTitle.textContent = 'Cambio Esercizio';
-        nextInfo.textContent = `UP NEXT: ${routine.exercises[currentExerciseIndex].name}`;
+        setTopExerciseText('Cambio Esercizio');
       }
+
+      if (currentPhase === 'getReady') {
+        activeRoundIndicator.textContent = `Round 1/${currentEx.rounds}`;
+      } else if (currentPhase === 'transition') {
+        const nextEx = routine.exercises[currentExerciseIndex];
+        activeRoundIndicator.textContent = `Round 1/${nextEx.rounds}`;
+      } else {
+        activeRoundIndicator.textContent = `Round ${currentExerciseRound}/${currentEx.rounds}`;
+      }
+
+      let nextBannerString = '';
+      if (currentPhase === 'getReady') {
+        if (routine.exercises.length > 1) {
+          nextBannerString = `PROSSIMO: ${routine.exercises[1].name}`;
+        } else {
+          nextBannerString = `ULTIMO ESERCIZIO!`;
+        }
+      } else {
+        if (currentExerciseIndex + 1 < routine.exercises.length) {
+          nextBannerString = `PROSSIMO: ${routine.exercises[currentExerciseIndex + 1].name}`;
+        } else {
+          nextBannerString = `ULTIMO ESERCIZIO!`;
+        }
+      }
+      setNextBannerText(nextBannerString);
 
       renderWorkoutDots();
     }
 
     function renderWorkoutDots() {
       const routine = getCurrentRoutine();
+      
       exerciseDots.innerHTML = '';
       for (let i = 0; i < routine.exercises.length; i++) {
         const dot = document.createElement('div');
-        dot.className = `dot ${i <= currentExerciseIndex && currentPhase !== 'getReady' ? 'active' : ''}`;
+        const isStillActive = i >= currentExerciseIndex;
+        dot.className = `dot ${isStillActive ? 'active' : ''}`;
         exerciseDots.appendChild(dot);
       }
 
       roundDots.innerHTML = '';
       const totalRoundsThisEx = routine.exercises[currentExerciseIndex].rounds;
-      for (let i = 1; i <= totalRoundsThisEx; i++) {
+      for (let r = 1; r <= totalRoundsThisEx; r++) {
         const dot = document.createElement('div');
-        dot.className = `dot ${i <= currentExerciseRound && currentPhase !== 'getReady' ? 'active' : ''}`;
+        const isStillActive = r >= currentExerciseRound;
+        dot.className = `dot ${isStillActive ? 'active' : ''}`;
         roundDots.appendChild(dot);
       }
     }
@@ -1492,6 +1640,8 @@
         timeRemaining = phaseTotalTime;
       }
 
+      lastTopExerciseText = '';
+      lastNextBannerText = '';
       updateWorkoutUI();
       startWorkout();
     }
