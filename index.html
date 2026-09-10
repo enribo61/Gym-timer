@@ -9,7 +9,7 @@
   
   <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23ff416c'/><circle cx='256' cy='276' r='140' fill='none' stroke='white' stroke-width='28'/><path d='M256 180v96l64 36' fill='none' stroke='white' stroke-width='24' stroke-linecap='round'/><rect x='226' y='76' width='60' height='36' rx='8' fill='white'/></svg>">
   
-  <title>Interval Timer - iOS Touch Drag Fixed</title>
+  <title>Interval Timer - Balanced Spacing & Larger Typography</title>
   <style>
     :root {
       --color-primary-gradient: linear-gradient(180deg, #ff416c 0%, #ff4b2b 100%);
@@ -140,7 +140,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* Classe aggiunta per bloccare lo scorrimento del contenitore durante il drag */
     .setup-content.no-scroll {
       overflow-y: hidden !important;
       touch-action: none !important;
@@ -234,7 +233,6 @@
       color: #95a5a6;
     }
 
-    /* Scheda Esercizio con ottimizzazione touch per iOS */
     .exercise-item-card {
       background: #ffffff;
       border: 1px solid #e9ecef;
@@ -372,7 +370,7 @@
       height: 100%;
       background-color: var(--bg-dark-grey);
       color: #ffffff;
-      padding: 16px 18px 20px;
+      padding: 14px 18px 16px;
     }
 
     .workout-header-container {
@@ -394,6 +392,7 @@
       line-height: 1.1;
     }
 
+    /* Box Unificato di Sessione - Spostato più in basso per centratura ottica */
     .session-unified-box {
       width: 100%;
       display: flex;
@@ -403,7 +402,7 @@
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 14px;
-      margin: 18px 0 10px;
+      margin: 18px 0 16px; /* Aumentata distanza superiore per centrare verticalmente */
     }
 
     .session-stat-left {
@@ -423,47 +422,27 @@
       white-space: nowrap;
     }
 
-    .current-exercise-banner {
-      width: 100%;
-      height: 48px;
-      margin: 0 0 4px;
-      padding: 0 14px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 14px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-
-    .current-exercise-banner .marquee-text-content {
-      font-size: clamp(20px, 6vw, 26px);
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-
+    /* Barre Exercise e Round in alto */
     .status-container {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+      margin-bottom: 2px;
     }
 
     .status-row {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 12px;
-      padding: 10px 16px;
+      padding: 9px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .status-row-title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: 0.5px;
       color: #ffffff;
@@ -488,10 +467,11 @@
       box-shadow: 0 0 6px rgba(243, 156, 18, 0.6);
     }
 
+    /* Cerchio Countdown */
     .timer-container {
       position: relative;
-      width: 270px;
-      height: 270px;
+      width: 255px;
+      height: 255px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -546,26 +526,55 @@
     }
 
     .time-digits {
-      font-size: 58px;
+      font-size: 54px;
       font-weight: 900;
       letter-spacing: -1px;
       line-height: 1;
     }
 
+    /* Contatore Round Attivo */
     .round-active-indicator {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       letter-spacing: 1.5px;
       color: #ffffff;
       text-align: center;
-      margin: 2px 0 4px;
+      margin: 2px 0 6px;
       text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
 
+    /* =========================================
+       BANNER ESERCIZIO CORRENTE (FONT MAGGIORATO)
+       ========================================= */
+    .current-exercise-banner {
+      width: 100%;
+      height: 48px;
+      margin: 0 0 6px;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .current-exercise-banner .marquee-text-content {
+      font-size: clamp(20px, 5.5vw, 23px); /* Font aumentato */
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    /* =========================================
+       BANNER PROSSIMO ESERCIZIO (FONT MAGGIORATO)
+       ========================================= */
     .next-exercise-banner {
       width: 100%;
-      height: 44px;
-      margin: 2px 0 6px;
+      height: 48px;
+      margin: 0 0 8px;
       padding: 0 14px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.14);
@@ -579,11 +588,12 @@
     }
 
     .next-exercise-banner .marquee-text-content {
-      font-size: 17px;
+      font-size: clamp(18px, 5vw, 21px); /* Font aumentato */
       font-weight: 700;
       letter-spacing: 0.5px;
     }
 
+    /* Classi Marquee */
     .marquee-wrapper {
       width: 100%;
       overflow: hidden;
@@ -619,7 +629,7 @@
       justify-content: space-around;
       align-items: center;
       width: 100%;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .btn-text {
@@ -634,8 +644,8 @@
     }
 
     .btn-play {
-      width: 70px;
-      height: 70px;
+      width: 68px;
+      height: 68px;
       background: #ffffff;
       border: none;
       border-radius: 50%;
@@ -647,8 +657,8 @@
     }
 
     .btn-play svg {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       fill: #121212;
     }
 
@@ -663,8 +673,8 @@
     }
 
     .btn-icon svg {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       fill: #ffffff;
     }
   </style>
@@ -701,7 +711,7 @@
 
           <div class="routine-video-row">
             <a id="routineYtLink" href="#" target="_blank" rel="noopener noreferrer" class="yt-video-link">
-              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
               Guarda su YouTube
             </a>
             <span class="btn-edit-url" title="Imposta link video per l'intera sessione" onclick="editRoutineVideo()">🔗</span>
@@ -732,24 +742,17 @@
 
     <!-- SCHERMATA 2: WORKOUT ATTIVO -->
     <div id="workoutScreen">
-      <!-- Intestazione Superiore -->
+      <!-- 1. Intestazione Superiore: Titolo + Box Unificato Perfettamente Equidistante -->
       <div class="workout-header-container">
         <div class="workout-header" id="headerTitle">GET READY</div>
         
-        <!-- Box Unificato di Sessione -->
         <div class="session-unified-box">
           <span class="session-stat-left" id="remainingExercisesPill">RIMANENTI: 3</span>
           <span class="session-stat-right" id="totalRemainingTime">02:35</span>
         </div>
       </div>
 
-      <!-- Banner Esercizio Attivo con Marquee -->
-      <div class="current-exercise-banner" id="topExerciseBanner">
-        <div class="marquee-wrapper">
-          <span class="marquee-text-content" id="topExerciseText">Preparazione</span>
-        </div>
-      </div>
-
+      <!-- 2. Box Exercise e Round -->
       <div class="status-container">
         <div class="status-row">
           <span class="status-row-title">Exercise</span>
@@ -761,12 +764,12 @@
         </div>
       </div>
 
-      <!-- Cerchio Countdown -->
+      <!-- 3. Cerchio Countdown -->
       <div class="timer-container">
-        <svg class="progress-ring" width="270" height="270">
-          <circle class="progress-ring-fill" cx="135" cy="135" r="122"></circle>
-          <circle class="progress-ring-track" cx="135" cy="135" r="122"></circle>
-          <circle class="progress-ring-circle" id="progressCircle" cx="135" cy="135" r="122"></circle>
+        <svg class="progress-ring" width="255" height="255">
+          <circle class="progress-ring-fill" cx="127.5" cy="127.5" r="115"></circle>
+          <circle class="progress-ring-track" cx="127.5" cy="127.5" r="115"></circle>
+          <circle class="progress-ring-circle" id="progressCircle" cx="127.5" cy="127.5" r="115"></circle>
         </svg>
         <div class="timer-display">
           <div class="phase-label" id="phaseLabel">GET READY</div>
@@ -775,16 +778,24 @@
         </div>
       </div>
 
-      <!-- Contatore Round Attivo -->
+      <!-- 4. Contatore Round Attivo -->
       <div class="round-active-indicator" id="activeRoundIndicator">Round 1/2</div>
 
-      <!-- Banner Prossimo Esercizio con Marquee -->
+      <!-- 5. Banner Esercizio Corrente (Font maggiorato) -->
+      <div class="current-exercise-banner" id="topExerciseBanner">
+        <div class="marquee-wrapper">
+          <span class="marquee-text-content" id="topExerciseText">Preparazione</span>
+        </div>
+      </div>
+
+      <!-- 6. Banner Prossimo Esercizio (Font maggiorato) -->
       <div class="next-exercise-banner" id="bottomNextBanner">
         <div class="marquee-wrapper">
           <span class="marquee-text-content" id="bottomNextText">PROSSIMO: Squats</span>
         </div>
       </div>
 
+      <!-- 7. Controlli Inferiori -->
       <div class="controls">
         <button class="btn-text" id="btnSetupBack">SETUP</button>
         <button class="btn-play" id="btnToggle">
@@ -1154,7 +1165,7 @@
 
           <div class="exercise-footer-row">
             <a href="${youtubeSearchUrl}" target="_blank" rel="noopener noreferrer" class="yt-video-link">
-              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
               Guarda su YouTube
             </a>
             <span class="btn-edit-url" title="Imposta link video personalizzato" onclick="editExerciseVideo(${index})">🔗</span>
@@ -1169,9 +1180,7 @@
       saveToStorage();
     }
 
-    // =========================================
-    // MOTORE DRAG & DROP OTTIMIZZATO PER iOS SAFARI
-    // =========================================
+    // Motore Drag & Drop Touch
     let activeDragCard = null;
     let holdTimeout = null;
     let startY = 0;
@@ -1180,7 +1189,6 @@
 
     function enableCardDragAndDrop(card) {
       card.addEventListener('pointerdown', (e) => {
-        // Se il tocco avviene su elementi interattivi, non innescare il drag
         if (e.target.closest('.time-chip') || e.target.closest('.yt-video-link') || e.target.closest('.btn-edit-name') || e.target.closest('.btn-edit-url')) {
           return;
         }
@@ -1189,13 +1197,11 @@
         activeDragCard = card;
         currentPointerId = e.pointerId;
 
-        // Press & Hold di 350ms
         holdTimeout = setTimeout(() => {
           isDragging = true;
           activeDragCard.classList.add('dragging-card');
           setupContentArea.classList.add('no-scroll');
 
-          // CATTURA DEL PUNTATORE: impedisce a Safari iOS di avviare lo scrolling
           try {
             activeDragCard.setPointerCapture(currentPointerId);
           } catch (err) {}
@@ -1206,14 +1212,12 @@
 
       card.addEventListener('pointermove', (e) => {
         if (!isDragging) {
-          // Se il dito si sposta prima del termine dell'attesa di 350ms, cancella il drag e lascia scorrere la pagina
           if (Math.abs(e.clientY - startY) > 8) {
             clearTimeout(holdTimeout);
           }
           return;
         }
 
-        // Blocca qualsiasi comportamento nativo durante il drag
         e.preventDefault();
 
         const afterElement = getDragAfterElement(exercisesListContainer, e.clientY);
@@ -1251,7 +1255,6 @@
       card.addEventListener('pointercancel', finishDrag);
     }
 
-    // Prevenzione esplicita di touchmove durante il trascinamento su schermi touch
     window.addEventListener('touchmove', (e) => {
       if (isDragging) {
         e.preventDefault();
@@ -1388,7 +1391,6 @@
       renderSetupUI();
     }
 
-    // Gestione testo scorrevole esercizio corrente
     function setTopExerciseText(text) {
       if (lastTopExerciseText === text) {
         return;
@@ -1403,7 +1405,6 @@
       }
     }
 
-    // Gestione testo scorrevole prossimo esercizio
     function setNextBannerText(text) {
       if (lastNextBannerText === text) {
         return;
@@ -1413,7 +1414,7 @@
       bottomNextText.textContent = text;
       bottomNextText.classList.remove('is-scrolling');
 
-      if (text.length > 22) {
+      if (text.length > 20) {
         bottomNextText.classList.add('is-scrolling');
       }
     }
@@ -1430,12 +1431,15 @@
       const routine = getCurrentRoutine();
       const currentEx = routine.exercises[currentExerciseIndex];
 
+      // Timer sessione
       const sessionLeft = calculateRemainingWorkoutTime();
       totalRemainingTime.textContent = formatTime(sessionLeft);
 
+      // Esercizi rimanenti
       const remainingExercisesCount = routine.exercises.length - currentExerciseIndex;
       remainingExercisesPill.textContent = `RIMANENTI: ${remainingExercisesCount}`;
 
+      // Colore dinamico cerchio e titolo
       if (currentPhase === 'getReady' || currentPhase === 'transition') {
         workoutScreen.style.setProperty('--circle-bg-color', 'var(--color-warning)');
       } else if (timeRemaining <= 5 && timeRemaining > 0) {
@@ -1446,6 +1450,7 @@
         workoutScreen.style.setProperty('--circle-bg-color', 'var(--color-rest)');
       }
 
+      // Testi di Fase
       if (currentPhase === 'getReady') {
         headerTitle.textContent = 'GET READY';
         phaseLabel.textContent = 'GET READY';
@@ -1468,6 +1473,7 @@
         setTopExerciseText('Cambio Esercizio');
       }
 
+      // Contatore Round attivo
       if (currentPhase === 'getReady') {
         activeRoundIndicator.textContent = `Round 1/${currentEx.rounds}`;
       } else if (currentPhase === 'transition') {
@@ -1477,6 +1483,7 @@
         activeRoundIndicator.textContent = `Round ${currentExerciseRound}/${currentEx.rounds}`;
       }
 
+      // Banner Prossimo Esercizio
       let nextBannerString = '';
       if (currentPhase === 'getReady') {
         if (routine.exercises.length > 1) {
